@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="build jar 2 Install4j" name="teemo all ant operation" basedir=".">
+
+	<!-- 版本号-->
+	<property name="version" value="1.0.1" /> <!--版本号-->
+	<property name="version2" value="1_0_1" /> <!--将上行的.转成_ -->
+	<property name="version3" value="beta_3" /> <!--版本的标记-->
+
+
+	<property name="destDir" value="D:/Program Files/install4j/samples/teemo" />
+	<property name="httpDir" value="D:\Java\httpd\teemo" />
+	<property name="serverDir" value="\\192.168.110.241\share\项目\Teemo" />
+	<property name="testDir" value="D:/Teemo" />
+	<property name="classpath" value=". lib/commons-dbcp-1.2.2.jar lib/commons-io-1.4.jar lib/commons-lang-2.4.jar lib/commons-pool-1.4.jar lib/ibatis-2.3.4.726.jar lib/jakarta-oro-2.0.8.jar lib/sqlitejdbc-v056.jar lib/substance.jar lib/commons-cli-1.2.jar lib/dcm4che-audit-2.0.25.jar lib/dcm4che-base64-2.0.25.jar lib/dcm4che-core-2.0.25.jar lib/dcm4che-filecache-2.0.25.jar lib/dcm4che-hp-2.0.25.jar lib/dcm4che-image-2.0.25.jar lib/dcm4che-imageio-2.0.25.jar lib/dcm4che-imageio-rle-2.0.25.jar lib/dcm4che-iod-2.0.25.jar lib/dcm4che-net-2.0.25.jar lib/dcm4che-soundex-2.0.25.jar lib/log4j-1.2.16.jar lib/slf4j-api-1.6.1.jar lib/slf4j-log4j12-1.6.1.jar lib/commons-configuration-1.6.jar lib/commons-logging-1.1.1.jar lib/commons-collections-3.2.jar lib/jfreechart-1.0.13.jar lib/jcommon-1.0.16.jar lib/contour.jar lib/batik-all.jar lib/forms-1.2.0.jar lib/js.jar lib/pdf-transcoder.jar lib/ribbon.jar lib/svnkit.jar lib/trident.jar lib/xerces_2_5_0.jar lib/xml-apis-ext.jar lib/xml-apis.jar lib/encog-engine-2.5.0.jar lib/neuroph-2.6.jar" />
+
+	<target name="build jar 2 Install4j" description="build teemo.jar to the install4j">
+		<delete file="${destDir}/teemo.jar" />
+		<jar destfile="${destDir}/teemo.jar">
+			<manifest>
+				<attribute name="Main-Class" value="com.ciotc.teemo.main.Teemo" />
+				<attribute name="Class-Path" value="${classpath}" />
+			</manifest>
+			<fileset dir="bin" />
+		</jar>
+	</target>
+
+	<target name="copy Files 2 Install4j" description="copy files to the install4j">
+		<!--config-->
+		<delete dir="${destDir}/config" />
+		<mkdir dir="${destDir}/config" />
+		<copy file="${basedir}/config/user.properties" todir="${destDir}/config" />
+		<copy file="${basedir}/config/language.properties" todir="${destDir}/config" />
+
+		<!--DataBase-->
+		<delete dir="${destDir}/Database" />
+		<mkdir dir="${destDir}/Database" />
+		<copy todir="${destDir}/Database">
+			<fileset dir="${basedir}/Database">
+				<exclude name="cvs" />
+			</fileset>
+		</copy>
+
+		<!--driver-->
+		<delete dir="${destDir}/driver" />
+		<mkdir dir="${destDir}/driver" />
+		<copy todir="${destDir}/driver">
+			<fileset dir="${basedir}/driver">
+				<exclude name="cvs" />
+			</fileset>
+		</copy>
+
+		<!--images-->
+		<delete dir="${destDir}/images" />
+		<mkdir dir="${destDir}/images" />
+		<copy todir="${destDir}/images">
+			<fileSet dir="${basedir}/images">
+				<exclude name="CVS" />
+			</fileSet>
+		</copy>
+
+		<!--lib-->
+		<delete dir="${destDir}/lib" />
+		<mkdir dir="${destDir}/lib" />
+		<copy todir="${destDir}/lib">
+			<fileset dir="${basedir}/lib" />
+		</copy>
+
+		<copy file="help.chm" todir="${destDir}" overwrite="true" />
+
+		<copy file="${basedir}/teemo.db" todir="${destDir}" overwrite="true" />
+
+		<copy file="update.log" todir="${destDir}" overwrite="true" />
+		<copy file="帮助文档.pdf" todir="${destDir}" overwrite="true" />
+	</target>
+
+	<taskdef name="install4j" classname="com.install4j.Install4JTask" classpath="D:\Program Files\install4j\bin\ant.jar" />
+	<target name="make media" description="build media in install4j" depends="copy Files 2 Install4j,build jar 2 Install4j">
+		<install4j projectfile="${destDir}\teemo.install4j">
+			<variable name="version" value="${version}" />
+		</install4j>
+	</target>
+
+	<target name="copy media 2 httpd" description="copy media file to http server in my computer">
+		<delete>
+			<fileset dir="${httpDir}">
+				<include name="teemo_windows_*.exe" />
+				<include name="updates.xml" />
+			</fileset>
+		</delete>
+		<copy file="${destDir}\media\teemo_windows_${version2}.exe" tofile="${httpDir}\teemo_windows_${version2}.exe" overwrite="true" />
+		<copy file="${destDir}\media\updates.xml" todir="${httpDir}" overwrite="true" />
+	</target>
+
+	<target name="copy media 2 server" description="copy media file to server(hu)">
+		<delete>
+			<fileset dir="${serverDir}">
+				<include name="teemo_windows_*.exe" />
+
+			</fileset>
+		</delete>
+		<copy file="${destDir}\media\teemo_windows_${version2}.exe" tofile="${serverDir}\teemo_windows_${version3}.exe" overwrite="true" />
+	</target>
+
+	<target name="build all" description="build all" depends="make media,copy media 2 httpd,copy media 2 server">
+	</target>
+
+	<target name="make a test app" description="make a test app in the D ,only for test">
+		<delete dir="${testDir}" />
+		<mkdir dir="${testDir}" />
+
+		<jar destfile="${testDir}/teemo.jar">
+			<manifest>
+				<attribute name="Main-Class" value="com.ciotc.teemo.main.Teemo" />
+				<attribute name="Class-Path" value="${classpath} lib/i4jruntime.jar" />
+			</manifest>
+			<fileset dir="bin" />
+		</jar>
+		<!--config-->
+		<mkdir dir="${testDir}/config" />
+		<copy todir="${testDir}/config">
+			<fileset dir="${basedir}/config">
+				<exclude name="cvs" />
+			</fileset>
+		</copy>
+
+
+		<!--DataBase-->
+		<mkdir dir="${testDir}/Database" />
+		<copy todir="${testDir}/Database">
+			<fileset dir="${basedir}/Database">
+				<exclude name="cvs" />
+			</fileset>
+		</copy>
+
+		<!--lib-->
+		<mkdir dir="${testDir}/lib" />
+		<copy todir="${testDir}/lib">
+			<fileset dir="${basedir}/lib" />
+		</copy>
+		<copy file="${basedir}/auto.bat" todir="${testDir}" />
+		<copy file="help.chm" todir="${testDir}" overwrite="true" />
+
+		<copy file="${basedir}/teemo.db" todir="${testDir}" overwrite="true" />
+
+		<copy file="update.log" todir="${testDir}" overwrite="true" />
+
+	</target>
+
+
+</project>

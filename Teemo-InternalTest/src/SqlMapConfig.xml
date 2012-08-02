@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMapConfig      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+
+	<settings cacheModelsEnabled="true" enhancementEnabled="true"
+		lazyLoadingEnabled="true" errorTracingEnabled="true" maxRequests="64"
+		maxSessions="20" maxTransactions="10" useStatementNamespaces="true" />
+	<transactionManager type="JDBC" commitRequired="false">
+		<dataSource type="DBCP">
+			<property name="JDBC.Driver" value="org.sqlite.JDBC" />
+			<property name="JDBC.ConnectionURL"
+				value="jdbc:sqlite:teemo.db" />
+			<property name="Pool.MaximumActiveConnections" value="1" />
+			<property name="Pool.MaximumIdleConnections" value="1" />
+			<property name="Pool.MaximumCheckoutTime" value="120000" />
+			<property name="Pool.TimeToWait" value="500" />
+
+			<property name="Pool.ValidationQuery" value="select 1" />
+			<property name="Driver.LogAbandoned" value="true" />
+			<property name="Driver.RemoveAbandoned" value="true" />
+			<property name="Driver.RemoveAbandonedTimeout" value="10" />
+
+		</dataSource>
+	</transactionManager>
+	<sqlMap resource="com/ciotc/teemo/dao/ibatis/maps/movies_SqlMap.xml" />
+	<sqlMap resource="com/ciotc/teemo/dao/ibatis/maps/patients_SqlMap.xml" />
+	<sqlMap resource="com/ciotc/teemo/dao/ibatis/maps/shortcomnts_SqlMap.xml" />
+
+</sqlMapConfig>

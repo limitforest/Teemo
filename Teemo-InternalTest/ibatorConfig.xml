@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE ibatorConfiguration PUBLIC "-//Apache Software Foundation//DTD Apache iBATIS Ibator Configuration 1.0//EN" "http://ibatis.apache.org/dtd/ibator-config_1_0.dtd" >
+<ibatorConfiguration>
+	<classPathEntry
+		location="E:\Java_Env\Workspace_EE\Teemo1\lib\sqlitejdbc-v056.jar" />
+	<ibatorContext id="context1">
+		<jdbcConnection driverClass="org.sqlite.JDBC"
+			connectionURL="jdbc:sqlite:E:\Java_Env\Workspace_EE\Teemo1\teemo.db" />
+		<javaModelGenerator targetPackage="com.ciotc.teemo.domain"
+			targetProject="Teemo1" />
+		<sqlMapGenerator targetPackage="com.ciotc.teemo.dao.ibatis.maps"
+			targetProject="Teemo1" />
+		<daoGenerator targetPackage="com.ciotc.teemo.dao"
+			targetProject="Teemo1" type="GENERIC-CI" />
+		<table tableName="movies">
+		</table>
+		<table tableName="patients">
+		</table>
+		<table tableName="shortcomnts">
+		</table>
+
+	</ibatorContext>
+</ibatorConfiguration>
